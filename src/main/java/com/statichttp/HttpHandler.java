@@ -23,6 +23,14 @@ public class HttpHandler {
         // 初始化操作
         // 获取对应的request和response
         // 主要是request，获取客户端请求
+        this.request = new Request(socketChannel);
+        this.response = new Response(socketChannel);
+    }
+
+    public void handlerRequest() {
+
+
+        connectionKey.interestOps(SelectionKey.OP_WRITE);
     }
 
     public void close() {
@@ -35,5 +43,9 @@ public class HttpHandler {
             System.out.println(LocalDateTime.now()+": "+socketAddress+" close error");
             e.printStackTrace();
         }
+    }
+
+    public String getUri() {
+        return request.getUri();
     }
 }
