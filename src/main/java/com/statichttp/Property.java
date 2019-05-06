@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Property {
     public static ConcurrentHashMap<String, String> FILE2MD5 = new ConcurrentHashMap<>(100);
 
-    public static String STATIC_ROOT = System.getProperty("user.dir") + File.separator + "static";
+    public static String STATIC_ROOT = "";
     public static String HOSTNAME = "";
     public static int PORT = 22222;
 

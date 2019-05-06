@@ -27,6 +27,7 @@ public class Response {
         socketChannel.write(ByteBuffer.wrap("Cache-Control: max-age=1234567, private, must-revalidate\r\n".getBytes()));
         socketChannel.write(ByteBuffer.wrap(("Last-Modified: "+modifiedTime+"\r\n").getBytes()));
         socketChannel.write(ByteBuffer.wrap(("ETag: "+md5+"\r\n").getBytes()));
+        socketChannel.write(ByteBuffer.wrap(("Connection: close\r\n").getBytes()));
         socketChannel.write(ByteBuffer.wrap(("\r\n").getBytes()));
 
         while (fileChannel.read(byteBuffer) > 0) {
@@ -44,6 +45,7 @@ public class Response {
 
     public void sendData(String msg) throws IOException {
         socketChannel.write(ByteBuffer.wrap("HTTP/1.1 200 OK\r\n".getBytes()));
+        socketChannel.write(ByteBuffer.wrap(("Connection: close\r\n").getBytes()));
         socketChannel.write(ByteBuffer.wrap(("Content-Type: text/html;charset=" + encoding+"\r\n").getBytes()));
         socketChannel.write(ByteBuffer.wrap(("\r\n").getBytes()));
         socketChannel.write(ByteBuffer.wrap(msg.getBytes()));
@@ -51,11 +53,13 @@ public class Response {
 
     public void response304() throws IOException {
         socketChannel.write(ByteBuffer.wrap("HTTP/1.1 304 Not Modified\r\n".getBytes()));
+        socketChannel.write(ByteBuffer.wrap(("Connection: close\r\n").getBytes()));
     }
 
     public void Response404() throws IOException {
         socketChannel.write(ByteBuffer.wrap("HTTP/1.1 404 NOTFOUND\r\n".getBytes()));
         socketChannel.write(ByteBuffer.wrap("Content-Type:text/html;charset=UTF-8\r\n".getBytes()));
+        socketChannel.write(ByteBuffer.wrap(("Connection: close\r\n").getBytes()));
         socketChannel.write(ByteBuffer.wrap(("\r\n").getBytes()));
         socketChannel.write(ByteBuffer.wrap(("该资源在服务器中不存在").getBytes()));
     }
