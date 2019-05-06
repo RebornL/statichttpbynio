@@ -2,9 +2,7 @@ package com.statichttp;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.*;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Set;
@@ -31,8 +29,6 @@ public class HttpServer {
         Selector selector = Selector.open();
         ssc.register(selector, SelectionKey.OP_ACCEPT);
 
-        ByteBuffer readBuff = ByteBuffer.allocate(1024);
-        ByteBuffer writeBuff = ByteBuffer.allocate(1024);
         System.out.println(LocalDateTime.now()+": Http Server start at "+this.hostname+":"+this.port);
         while (isRunning) {
 
@@ -49,7 +45,7 @@ public class HttpServer {
                     SocketChannel socketChannel = ssc.accept();
                     socketChannel.configureBlocking(false);
                     socketChannel.register(selector, SelectionKey.OP_READ);
-                    System.out.println(LocalDateTime.now() + ": "+ socketChannel.getRemoteAddress() + " link in");
+                    System.out.println(LocalDateTime.now() + ": "+ socketChannel.getRemoteAddress().toString().substring(1) + " link in");
                     SelectionKey connectionKey = socketChannel.register(selector, SelectionKey.OP_READ);
                     connectionKey.attach(new HttpHandler(socketChannel, connectionKey));
                 } else if (key.isReadable()) {
@@ -57,11 +53,11 @@ public class HttpServer {
                     System.out.println(LocalDateTime.now() + ": read from "+ socketChannel.getRemoteAddress());
                     HttpHandler handler = (HttpHandler)key.attachment();
                     handler.handlerRequest();
-//                    if (handler.getUri() == SHUTDOWN_COMMAND) {
-//                        handler.close();
-//                        this.isRunning = false;
-//                        break;
-//                    }
+                    if (handler.getUri().equals(SHUTDOWN_COMMAND)) {
+                        handler.closeServerByWeb();
+                        this.isRunning = false;
+                        break;
+                    }
 
                 } else if (key.isWritable()) {
                     SocketChannel socketChannel = (SocketChannel) key.channel();

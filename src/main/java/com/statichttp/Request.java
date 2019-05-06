@@ -3,7 +3,6 @@ package com.statichttp;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class Request {
@@ -43,7 +42,7 @@ public class Request {
         for (int i = 1; i < requestHeader.length; i++) {
             String[] headerKV = requestHeader[i].split(":");
             if (headerKV.length > 0) {
-                req.put(headerKV[0], headerKV[1].strip());
+                req.put(headerKV[0], headerKV[1].trim());//strip是jdk11的方法
             }
         }
 
@@ -87,6 +86,6 @@ public class Request {
     }
 
     public String getHeader(String param) {
-        return req.get(param);
+        return req.getOrDefault(param, null);
     }
 }
