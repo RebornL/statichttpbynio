@@ -40,7 +40,7 @@ public class HttpServer {
             Set<SelectionKey> keys = selector.selectedKeys();
             Iterator<SelectionKey> it = keys.iterator();
 
-            while (it.hasNext()) {
+            while (isRunning && it.hasNext()) {
                 SelectionKey key = it.next();
                 it.remove();
 
@@ -57,31 +57,18 @@ public class HttpServer {
                     System.out.println(LocalDateTime.now() + ": read from "+ socketChannel.getRemoteAddress());
                     HttpHandler handler = (HttpHandler)key.attachment();
                     handler.handlerRequest();
-
-                    System.out.println(LocalDateTime.now() + ": " + handler.getUri());
-                    if (handler.getUri() == SHUTDOWN_COMMAND) {
-                        handler.close();
-                        this.isRunning = false;
-                        break;
-                    }
+//                    if (handler.getUri() == SHUTDOWN_COMMAND) {
+//                        handler.close();
+//                        this.isRunning = false;
+//                        break;
+//                    }
 
                 } else if (key.isWritable()) {
-                    System.out.println(Paths.get(Property.STATIC_ROOT, "test.jpg"));
-                    FileChannel fileChannel = FileChannel.open(Paths.get(Property.STATIC_ROOT, "test.jpg")   );
-//                        writeBuff.rewind();
                     SocketChannel socketChannel = (SocketChannel) key.channel();
-                    System.out.println(LocalDateTime.now() + ": response to "+socketChannel.getRemoteAddress());
-                    socketChannel.write(ByteBuffer.wrap("Http/1.1 200 OK\n".getBytes()));
-                    socketChannel.write(ByteBuffer.wrap("content-type: image/jpeg; charset: utf-8\n".getBytes()));
-                    socketChannel.write(ByteBuffer.wrap(("content-length: "+fileChannel.size()+"\n\n").getBytes()));
-
-                    while (fileChannel.read(writeBuff) != -1) {
-                        writeBuff.flip();
-                        socketChannel.write(writeBuff);
-                        writeBuff.clear();
-                    }
-                    System.out.println(LocalDateTime.now()+": "+socketChannel.getRemoteAddress()+" close");
-                    socketChannel.close();
+                    System.out.println(LocalDateTime.now()+": send static file to "+socketChannel.getRemoteAddress());
+                    HttpHandler handler = (HttpHandler)key.attachment();
+                    handler.handlerResponse();
+                    handler.close();
 
                 }
             }

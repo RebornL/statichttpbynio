@@ -18,19 +18,20 @@ public class Request {
 
     public Request(SocketChannel socketChannel) {
         this.socketChannel = socketChannel;
-        try {
-            parse();
-        } catch (IOException e) {
-            System.out.println(LocalDateTime.now()+": 解析头部参数出错");
-            e.printStackTrace();
-        }
+//        try {
+//            parse();
+//        } catch (IOException e) {
+//            System.out.println(LocalDateTime.now()+": 解析头部参数出错");
+//            e.printStackTrace();
+//        }
     }
 
     public void parse() throws IOException {
         ByteBuffer readBuff = ByteBuffer.allocate(1024);
         readBuff.clear();
         String request = "";
-        while ((socketChannel.read(readBuff)) != 0) {
+        int readByte = 0;
+        while ((readByte = socketChannel.read(readBuff)) > 0) {
             readBuff.flip();
             request += Property.CHARSET.decode(readBuff).toString();
             readBuff.clear();

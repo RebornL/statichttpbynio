@@ -6,8 +6,10 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Property {
+    public static ConcurrentHashMap<String, String> FILE2MD5 = new ConcurrentHashMap<>(100);
 
     public static String STATIC_ROOT = System.getProperty("user.dir") + File.separator + "static";
     public static String HOSTNAME = "";
