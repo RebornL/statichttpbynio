@@ -8,13 +8,14 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Property {
+    public static final Charset CHARSET = Charset.forName("utf-8");
+    public static final int CORENUM = Runtime.getRuntime().availableProcessors();
+
     public static ConcurrentHashMap<String, String> FILE2MD5 = new ConcurrentHashMap<>(100);
 
     public static String STATIC_ROOT = "";
     public static String HOSTNAME = "";
     public static int PORT = 22222;
-
-    public static final Charset CHARSET = Charset.forName("utf-8");
 
     static {
         Properties props = new Properties();
